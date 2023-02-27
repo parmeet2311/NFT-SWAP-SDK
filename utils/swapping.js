@@ -101,15 +101,16 @@ console.log("order",order);
   console.log("signedOrder",signedOrder);
   // const postedOrder = await nftSwapSdk.postOrderToOrderbook(signedOrder, CHAIN_ID);
   
-  const postedOrder=axios({
-    method: 'post',
-    url: 'https://api.trader.xyz/orderbook/order',
-    data: {
-      chainId: CHAIN_ID, // This is the body part
-      order: signedOrder
-    }
-  });
-  console.log(postedOrder)
+  // const postedOrder=axios({
+  //   method: 'post',
+  //   url: 'https://api.trader.xyz/orderbook/order',
+  //   data: {
+  //     chainId: CHAIN_ID, // This is the body part
+  //     order: signedOrder
+  //   }
+  // });
+  // console.log(postedOrder)
+  
   return signedOrder;
   // console.log({
   //   userAddress,
