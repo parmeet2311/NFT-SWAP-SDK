@@ -8,7 +8,7 @@ export async function part2(userAddress, userNFT, makerData) {
 
   const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-  const CHAIN_ID = 1337; //rinkeby
+  const CHAIN_ID = 1337; //ganache
   const Aether_420 = {
     tokenAddress: userNFT,
     tokenId: "1",
@@ -55,7 +55,7 @@ export async function swap(userAddress, userNFT, nftContract) {
 
   const signer = provider.getSigner();
 
-  const CHAIN_ID = 1337; //rinkeby
+  const CHAIN_ID = 1337; //ganache
 
   const Oizys_69 = {
     tokenAddress: userNFT,
