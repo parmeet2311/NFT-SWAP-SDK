@@ -8,6 +8,7 @@ import Container from 'react-bootstrap/Container';
 export default function Orderbook() {
     const [orders, setOrders]=useState([])
     const [filterOrder, setFilterOrder] = useState(orders)
+    const [nftType, setNftType]=useState("Select NFT Type");
 
     const getOrderData = async () => {
         
@@ -25,11 +26,12 @@ export default function Orderbook() {
 
     };
     function handleFilter(nftType){
-        console.log(nftType);
+        // console.log(nftType);
+        setNftType(nftType)
         const filterByNftType= orders.filter(index=> index.nftType===`${nftType}`)
-        console.log(filterByNftType);
+        // console.log(filterByNftType);
         setFilterOrder(filterByNftType)
-        console.log(filterOrder)
+        // console.log(filterOrder)
     }
 
     useEffect(() => {
@@ -44,7 +46,7 @@ export default function Orderbook() {
                     id="dropdown-button-dark-example2"
                     variant="secondary"
                     menuVariant="dark"
-                    title="Select NFT Type"
+                    title={nftType}
                     className="mt-2 text-left"
                 >
                    
@@ -52,7 +54,13 @@ export default function Orderbook() {
                     <Dropdown.Item onClick={()=>handleFilter("ERC721")}>ERC-721</Dropdown.Item>
                     <Dropdown.Item onClick={()=>handleFilter("ERC1155")}>ERC-1155</Dropdown.Item>
                     <Dropdown.Divider />
-                    <Dropdown.Item onClick={()=>setFilterOrder(orders)}>All</Dropdown.Item>
+                    <Dropdown.Item onClick={()=>{
+                        setNftType("All")
+                    setFilterOrder(orders)
+                    }
+                }
+                    
+                    >All</Dropdown.Item>
                     
                 </DropdownButton>
 
@@ -61,7 +69,7 @@ export default function Orderbook() {
                         <Card style={{ width: '20rem', margin:'10px' }}>
                         <Card.Body>
                             <Card.Title>{nft.nftType}</Card.Title>
-                            <Card.Subtitle className="mb-2 text-muted">{nft.nftTokenAmount}eth</Card.Subtitle>
+                            <Card.Subtitle className="mb-2 text-muted">Price: {nft.nftTokenAmount}</Card.Subtitle>
                             <Card.Text class="text-left mb-2">
                                
                                     <li>erc20Token: {nft.erc20Token}</li>
