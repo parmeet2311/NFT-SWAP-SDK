@@ -16,7 +16,7 @@ const Congrats = () => {
   }, [txhash]);
   if (txhash) {
     return (
-      <div className="flex flex-col items-center justify-center w-screen h-screen text-white selection:bg-red-700 selection:text-white">
+      <div className="flex flex-col items-center justify-center w-screen h-screen text-black selection:bg-red-700 selection:text-white">
         <Head>
           <title>NFT Swap Completed 🥳</title>
         </Head>

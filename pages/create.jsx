@@ -1,4 +1,4 @@
-import { useContext,useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import tw from "tailwind-styled-components";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
@@ -22,8 +22,6 @@ const Containing = tw.form` flex items-center justify-between flex-col w-fit h-[
 const Required = tw.h6`font-bold text-red-700 rounded`;
 
 
-
-
 export default function Create() {
     const router = useRouter();
     const { dispatch } = useContext(StoreContext);
@@ -31,7 +29,7 @@ export default function Create() {
     const { connect, error, isConnecting, pendingConnector } = useConnect({
         chainId: chain.localhost.id,
         connector: new MetaMaskConnector(),
-      });
+    });
     const { data: account } = useAccount();
     const { address } = useAccount();
     const [price, setPrice] = useState();
@@ -41,10 +39,10 @@ export default function Create() {
     const [errorMessage, setErrorMessage] = useState(false);
     const handleClose = () => setShow(false);
     const [initialValues, setInitialValues] = useState({
-        myNFT:"0x9a0D60F7c3C90A2c661689a8690CA7B1731EC7F0",
-        nftContract:"0x07fcb3A4b8a6A7044EF722d3c70FffE069Eb161C",
+        myNFT: "0x39b9214b075E732b6eD85E7c5058426cf7F42c41",
+        nftContract: "0x1fef63847224FEDE78BA3f1622b3b81B822D1bfA",
         nftHolder: "0x9BD2c12955820D51838528A1863D2e7a682bc8B8"
-        
+
     })
     const [takerData, setTakerData] = useState({
         contractAddress: initialValues.nftContract,
@@ -61,44 +59,26 @@ export default function Create() {
     async function handleSell1(values) {
         console.log(values);
         const takerData = {
-        contractAddress: values.nftContract,
-        takerAddress: values.nftHolder,
-      };
-      handler();
-      handlerVisible();
-      try {
-        const makerData = await swap(account.address, values.myNFT, values.nftContract);
-        dispatch({ type: ACTION_TYPES.SET_MAKER_DATA, payload: { makerData } });
-        dispatch({ type: ACTION_TYPES.SET_TAKER_DATA, payload: { takerData } });
-        setLoading(false);
-        setVisible(false);
-        router.push("/taker");
-      } catch (error) {
-        console.log(error.message);
-        setErrorMessage(true);
-        setInterval(() => {
-          router.reload(window.location.pathname);
-        }, 3000);
-      }
-    //     console.log(tokenAddress, tokenId, price)
-    //    console.log(initialValues)
-    //    console.log(takerData)
-    //     handler();
-    //     handlerVisible();
-    //     try {
-    //         const makerData = await swap(account.address, initialValues.myNFT, initialValues.nftContract);
-    //         dispatch({ type: ACTION_TYPES.SET_MAKER_DATA, payload: { makerData } });
-    //         dispatch({ type: ACTION_TYPES.SET_TAKER_DATA, payload: { takerData } });
-    //         setLoading(false);
-    //         setVisible(false);
-    //         router.push("/taker");
-    //     } catch (error) {
-    //         console.log(error.message);
-    //         setErrorMessage(true);
-    //         setInterval(() => {
-    //             router.reload(window.location.pathname);
-    //         }, 3000);
-    //     }
+            contractAddress: values.nftContract,
+            takerAddress: values.nftHolder,
+        };
+        handler();
+        handlerVisible();
+        try {
+            const makerData = await swap(account.address, values.myNFT, values.nftContract);
+            dispatch({ type: ACTION_TYPES.SET_MAKER_DATA, payload: { makerData } });
+            dispatch({ type: ACTION_TYPES.SET_TAKER_DATA, payload: { takerData } });
+            setLoading(false);
+            setVisible(false);
+            router.push("/taker");
+        } catch (error) {
+            console.log(error.message);
+            setErrorMessage(true);
+            setInterval(() => {
+                router.reload(window.location.pathname);
+            }, 3000);
+        }
+      
     }
     const handleShow = (id, ad) => {
         setShow(true)
@@ -107,7 +87,7 @@ export default function Create() {
             addr: ad
         })
         console.log(address, selectedNft)
-       
+
     };
 
 
@@ -165,8 +145,8 @@ export default function Create() {
 
                     <Button variant="primary"
                         disabled={!price ? true : false}
-                        onClick={()=> handleSell1(initialValues)}
-                        
+                        onClick={() => handleSell1(initialValues)}
+
                     >
                         Confirm Order
                     </Button>
