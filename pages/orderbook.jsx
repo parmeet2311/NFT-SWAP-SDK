@@ -44,12 +44,10 @@ export default function Orderbook() {
                     id="dropdown-button-dark-example2"
                     variant="secondary"
                     menuVariant="dark"
-                    title="Dropdown button"
+                    title="Select NFT Type"
                     className="mt-2 text-left"
                 >
-                    <Dropdown.Item href="#/action-1" active>
-                        Action
-                    </Dropdown.Item>
+                   
                     <Dropdown.Item onClick={()=>handleFilter("ERC20")}>ERC-20</Dropdown.Item>
                     <Dropdown.Item onClick={()=>handleFilter("ERC721")}>ERC-721</Dropdown.Item>
                     <Dropdown.Item onClick={()=>handleFilter("ERC1155")}>ERC-1155</Dropdown.Item>
