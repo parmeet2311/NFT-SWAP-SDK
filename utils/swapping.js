@@ -176,7 +176,7 @@ export async function swap(userAddress, userNFT, nftContract) {
 
   // Initiate the SDK for User A.
   // Pass the user's wallet signer (available via the user's wallet provider) to the Swap SDK
-  const nftSwapSdk = new NftSwapV4(provider, signer, CHAIN_ID);
+  const nftSwapSdk = new NftSwap(provider, signer, CHAIN_ID);
   console.log("nftSwapSdk", nftSwapSdk)
   // Check if we need to approve the NFT for swapping
   const approvalStatusForUserA = await nftSwapSdk.loadApprovalStatus(assetsToSwapUserA[0], walletAddressUserA);
@@ -213,11 +213,11 @@ console.log("order",order);
   //   }
   // });
   // console.log(postedOrder)
-  const newOrder = await nftSwapSdk.postOrder(
-    signedOrder,
-    nftSwapSdk.CHAIN_ID
-  );
-  console.log(newOrder);
+  // const newOrder = await nftSwapSdk.postOrder(
+  //   signedOrder,
+  //   nftSwapSdk.CHAIN_ID
+  // );
+  // console.log(newOrder);
   return signedOrder;
   // console.log({
   //   userAddress,
