@@ -1,6 +1,6 @@
-import { NftSwapV4 } from "@traderxyz/nft-swap-sdk";
 import { ethers } from "ethers";
 import axios from "axios";
+import { NftSwapV4 } from "@traderxyz/nft-swap-sdk";
 
 export async function swapV4Build (walletAddress, usdcAmount, nftAddress){
     
@@ -10,6 +10,7 @@ export async function swapV4Build (walletAddress, usdcAmount, nftAddress){
     const CHAIN_ID = 1337; 
 
     const nftSwapSdk = new NftSwapV4(provider, signer, CHAIN_ID);
+console.log(nftSwapSdk)
 
     const userNFT = {
         tokenAddress: nftAddress,
@@ -23,11 +24,11 @@ export async function swapV4Build (walletAddress, usdcAmount, nftAddress){
         type: "ERC20"
     };
 
-    const order = nftSwapSdk.buildOrder(userNFT, usdc, walletAddress);
-
+    const order = nftSwapSdk.buildNftAndErc20Order(userNFT, usdc, 'sell',walletAddress);
+    console.log("order",order)
     await nftSwapSdk.approveTokenOrNftByAsset(userNFT, walletAddress);
 
     const signedOrder = nftSwapSdk.signOrder(order);
-
+console.log(signedOrder);
     await nftSwapSdk.postOrder(signedOrder);
 }

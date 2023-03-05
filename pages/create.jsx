@@ -11,6 +11,7 @@ import { swap } from "../utils/swapping";
 import { ACTION_TYPES, StoreContext } from "../store/store-context";
 import axios from "axios"
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
+import { swapV4Build } from "../utils/swapV4Build";
 
 
 
@@ -78,6 +79,11 @@ export default function Create() {
                 router.reload(window.location.pathname);
             }, 3000);
         }
+      
+    }
+    async function handleSell2(values) {
+        const makerData= await swapV4Build(address,price, initialValues.myNFT)
+        console.log(makerData);
       
     }
     const handleShow = (id, ad) => {
@@ -149,6 +155,13 @@ export default function Create() {
 
                     >
                         Confirm Order
+                    </Button>
+                    <Button variant="primary"
+                        disabled={!price ? true : false}
+                        onClick={() => handleSell2(initialValues)}
+
+                    >
+                        Confirm Order for V4
                     </Button>
                 </Modal.Footer>
             </Modal>
