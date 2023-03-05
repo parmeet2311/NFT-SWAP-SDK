@@ -92,22 +92,39 @@ export default function buildOrder() {
                     amount: values.price,
                     type: "ERC20"
                 };
+
+                const approval = await nftSwapSdk.loadApprovalStatus(
+                    userNFT,
+                    account.address
+                );
+                // If we do need to approve User A's CryptoPunk for swapping, let's do that now
+                if (!approval.contractApproved) {
+                    const approvalTx = await nftSwapSdk.approveTokenOrNftByAsset(
+                        userNFT,
+                        account.address
+                    );
+                    const approvalTxReceipt = await approvalTx.wait();
+                    console.log(
+                        `Approved to swap with 0x v4 (txHash: ${approvalTxReceipt.transactionHash})`
+                    );
+                }
+
                 console.log("Debug: 1")
                 const order = nftSwapSdk.buildOrder(userNFT, usdc, account.address);
                 console.log("Debug: 2")
-                // await nftSwapSdk.approveTokenOrNftByAsset(userNFT, account.address);
+                await nftSwapSdk.approveTokenOrNftByAsset(userNFT, account.address);
                 console.log("Debug: 3")
-                const signedOrder = nftSwapSdk.signOrder(order);
+                const signedOrder = await nftSwapSdk.signOrder(order);
                 console.log("Debug: 4")
                 console.log("signed order: ", signedOrder)
+                router.push({ path: "/buyorder", query: { signedorder:signedOrder} });
 
-                router.push({ path: "/buyorder", query: { signedorder: signed } });
             } catch (error) {
                 console.log(error);
                 setErrorMessage(true);
                 setInterval(() => {
                     router.reload(window.location.pathname);
-                }, 3000);
+                }, 30000);
             }
         },
     });

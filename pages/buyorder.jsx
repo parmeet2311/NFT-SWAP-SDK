@@ -8,10 +8,13 @@ const Containing = tw.form` flex items-center justify-between flex-col w-fit h-[
 const Loader = tw.h2`font-bold text-red-700 `;
 const Required = tw.h6`font-bold text-red-700 rounded`;
 
-export async function BuyOrder(signedorder) {
+export async function BuyOrder() {
 
     const router = useRouter();
     const { dispatch } = useContext(StoreContext);
+
+
+    const signedorder = router.query.signedorder;
 
     //* I've chosen MetaMask as the connector,
     const { connect, error, isConnecting, pendingConnector } = useConnect({
