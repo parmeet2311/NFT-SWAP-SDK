@@ -10,6 +10,7 @@ import Button from 'react-bootstrap/Button';
 export default function Orderbook() {
     const [orders, setOrders] = useState([])
     const [filterOrder, setFilterOrder] = useState(orders)
+    const [filterByChainId, setFilterByChainId]= useState();
     const [nftType, setNftType] = useState("Select NFT Type");
     const [show, setShow] = useState(false);
     const [selectedNft, setSelectedNft] = useState({
@@ -35,8 +36,11 @@ export default function Orderbook() {
     };
     function handleFilter(nftType) {
         // console.log(nftType);
+        
         setNftType(nftType)
-        const filterByNftType = orders.filter(index => index.nftType === `${nftType}`)
+        const filterByNftType = orders.filter(index => 
+            index.nftType === `${nftType}` && index.chainId==='5'
+            )
         // console.log(filterByNftType);
         setFilterOrder(filterByNftType)
         // console.log(filterOrder)
