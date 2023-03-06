@@ -61,9 +61,9 @@ export default function buildOrder() {
     //* form submission handling
     const formik = useFormik({
         initialValues: {
-            price: "",
+            price: "1",
             nftContract: "",
-            myNFT: "0x9a0D60F7c3C90A2c661689a8690CA7B1731EC7F0",
+            myNFT: "0xC2d8a39743A76EFF9e945974CF1DC0b2FEeF5c5F",
         },
 
         onSubmit: async (values) => {
@@ -83,7 +83,7 @@ export default function buildOrder() {
 
                 const userNFT = {
                     tokenAddress: values.myNFT,
-                    tokenId: "1",
+                    tokenId: "0",
                     type: "ERC721"
                 };
 
@@ -92,26 +92,43 @@ export default function buildOrder() {
                     amount: values.price,
                     type: "ERC20"
                 };
+                const approval = await nftSwapSdk.loadApprovalStatus(
+                    userNFT,
+                    account.address
+                );
+                console.log("approval",approval)
+                // If we do need to approve User A's CryptoPunk for swapping, let's do that now
+                if (!approval.contractApproved) {
+                    const approvalTx = await nftSwapSdk.approveTokenOrNftByAsset(
+                        userNFT,
+                        account.address
+                    );
+                    const approvalTxReceipt = await approvalTx.wait();
+                    console.log(
+                        `Approved to swap with 0x v4 (txHash: ${approvalTxReceipt.transactionHash})`
+                    );
+                }
+                
+                dispatch({ type: ACTION_TYPES.SET_MAKER_DATA, payload: { userNFT } });
                 console.log("Debug: 1")
                 console.log("userNFT",userNFT, "nftSwapSdk",nftSwapSdk )
                 const order = nftSwapSdk.buildOrder(userNFT, usdc, account.address);
                 console.log("Debug: 2")
                 console.log("order", order)
-                await nftSwapSdk.approveTokenOrNftByAsset(userNFT, account.address);
+                // await nftSwapSdk.approveTokenOrNftByAsset(userNFT, account.address);
                 console.log("Debug: 3")
                 const signedOrder = nftSwapSdk.signOrder(order);
                 console.log("Debug: 4")
                 console.log("signed order: ", signedOrder)
-                const postedOrder=await nftSwapSdk.postOrder(signedOrder);
-                console.log(postedOrder)
-                // router.push("/buyorder");
-                // router.push({ path: "/buyorder", query: { signedorder: signed } });
+            
+                router.push("/buyorder");
+               
             } catch (error) {
                 console.log(error);
-                // setErrorMessage(true);
-                // setInterval(() => {
-                //     router.reload(window.location.pathname);
-                // }, 3000);
+                setErrorMessage(true);
+                setInterval(() => {
+                    router.reload(window.location.pathname);
+                }, 3000);
             }
         },
     });
