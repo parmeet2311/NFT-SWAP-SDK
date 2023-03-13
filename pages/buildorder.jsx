@@ -28,7 +28,7 @@ export default function buildOrder() {
 
     //* I've chosen MetaMask as the connector,
     const { connect, error, isConnecting, pendingConnector } = useConnect({
-        chainId: chain.localhost.id,
+        chainId: 5,
         connector: new MetaMaskConnector(),
     });
     const { data: account } = useAccount();
@@ -77,18 +77,28 @@ export default function buildOrder() {
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 const signer = provider.getSigner();
                 //CURRENTLY SET CHAIN ID TO DEV CHAIN GANACHE
-                const CHAIN_ID = chain.localhost.id;
+                console.log("Debug: 1")
+                const CHAIN_ID = 5;
                 console.log(CHAIN_ID);
-                const nftSwapSdk = new NftSwapV4(provider, signer, CHAIN_ID);
+
+
+                const params = {
+                    appId: '314159',
+                    zeroExExchangeProxyContractAddress: "0xf91bb752490473b8342a3e964e855b9f9a2a668e",
+                    orderbookRootUrl: "https://api.trader.xyz"
+                }
+
+
+                const nftSwapSdk = new NftSwapV4(provider, signer, CHAIN_ID, params);
 
                 const userNFT = {
                     tokenAddress: values.myNFT,
-                    tokenId: "0",
+                    tokenId: "1",
                     type: "ERC721"
                 };
 
                 const usdc = {
-                    tokenAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                    tokenAddress: "0x7af963cf6d228e564e2a0aa0ddbf06210b38615d",
                     amount: values.price,
                     type: "ERC20"
                 };
@@ -117,18 +127,16 @@ export default function buildOrder() {
                 console.log("order", order)
                 // await nftSwapSdk.approveTokenOrNftByAsset(userNFT, account.address);
                 console.log("Debug: 3")
-                const signedOrder = nftSwapSdk.signOrder(order);
+                const signedOrder = await nftSwapSdk.signOrder(order);
                 console.log("Debug: 4")
                 console.log("signed order: ", signedOrder)
-            
+
+                const postedOrder = await nftSwapSdk.postOrder(signedOrder, 5);
                 router.push("/buyorder");
                
             } catch (error) {
-                console.log(error);
+                console.log(error.message);
                 setErrorMessage(true);
-                setInterval(() => {
-                    router.reload(window.location.pathname);
-                }, 3000);
             }
         },
     });

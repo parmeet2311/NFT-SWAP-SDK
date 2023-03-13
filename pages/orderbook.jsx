@@ -5,15 +5,18 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Container from 'react-bootstrap/Container';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import { NftSwapV4 } from "@traderxyz/nft-swap-sdk";
+import { NftSwapV4, NftSwap } from "@traderxyz/nft-swap-sdk";
 import { ethers } from "ethers";
 import { useConnect, useAccount, useDisconnect, chain } from "wagmi";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import React from "react";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
+import Router from 'next/router';
 
 export default function Orderbook() {
+    const router = useRouter();
+
     const [orders, setOrders] = useState([])
     const [filterOrder, setFilterOrder] = useState(orders)
     const [filterByChainId, setFilterByChainId] = useState();
@@ -44,18 +47,56 @@ export default function Orderbook() {
     async function handleBuy() {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
+        console.log("Debug: ",provider,"---",signer);
         try {
-            const swapSdk = new NftSwapV4(provider, signer, 5);
-            const tx = await swapSdk.fillSignedOrder(selectedNft.order);
+
+            const params = {
+                appId: '314159',
+                zeroExExchangeProxyContractAddress: "0xf91bb752490473b8342a3e964e855b9f9a2a668e",
+                orderbookRootUrl: "https://api.trader.xyz"
+            }
+
+            console.log("DEBUG")
+            const swapSdk = new NftSwapV4(provider, signer, 5, params);
+
+            console.log("DEBUG2")
+            //approval
+            const userBERC20 = {
+                tokenAddress: "0x7af963cf6d228e564e2a0aa0ddbf06210b38615d",
+                amount: "1000000000000000000",
+                type: "ERC20"
+            };
+
+            console.log("DEBUG3: ",userBERC20, "--", account.address);
+            const approval = await swapSdk.loadApprovalStatus(
+                userBERC20,
+                account.address
+            );
+
+            console.log("DEBUG4")
+            console.log("approval",approval)
+            // If we do need to approve User A's CryptoPunk for swapping, let's do that now
+            // if (!approval.contractApproved) {
+                const approvalTx = await swapSdk.approveTokenOrNftByAsset(
+                    userBERC20,
+                    account.address
+                );
+                const approvalTxReceipt = await approvalTx.wait();
+                console.log(
+                    `Approved to swap with 0x v4 (txHash: ${approvalTxReceipt.transactionHash})`
+                );
+            // }
+
+            console.log("Order",selectedNft.or);
+            const tx = await swapSdk.fillSignedOrder(selectedNft.or);
             const txReceipt = await fillTx.wait();
             console.log('Filled order! 🎉', txReceipt.transactionHash);
         }
         catch (err) {
-            console.log(err.message);
+            console.log(err);
+
+            console.log("order: ",selectedNft.or);
             setErrorMessage(true);
-            setInterval(() => {
-                router.reload(window.location.pathname);
-            }, 30000);
         }
     }
 
@@ -85,12 +126,12 @@ export default function Orderbook() {
         setFilterOrder(filterByNftType)
         // console.log(filterOrder)
     }
-    const handleShow = (id, ad, or) => {
+    const handleShow = (id, ad, order) => {
         setShow(true)
         setSelectedNft({
             tokenId: id,
             addr: ad,
-            order: or
+            or: order
         })
         // console.log(address, selectedNft)
 
@@ -135,7 +176,7 @@ export default function Orderbook() {
                         >
                             <Card.Body>
                                 <Card.Title>{nft.nftType}</Card.Title>
-                                <Card.Subtitle className="mb-2 text-muted">Price: {nft.nftTokenAmount}</Card.Subtitle>
+                                <Card.Subtitle className="mb-2 text-muted">Price: {nft.erc20TokenAmount}</Card.Subtitle>
                                 <Card.Text class="text-left mb-2">
 
                                     <li>erc20Token: {nft.erc20Token}</li>
