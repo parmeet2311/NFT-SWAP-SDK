@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 
 export default function Orderbook() {
+    const router = useRouter();
     const [orders, setOrders] = useState([])
     const [filterOrder, setFilterOrder] = useState(orders)
     const [filterByChainId, setFilterByChainId] = useState();
@@ -22,7 +23,7 @@ export default function Orderbook() {
     const [selectedNft, setSelectedNft] = useState({
         tokenId: '',
         addr: '',
-        or: ""
+        order: ""
     })
     const handleClose = () => setShow(false);
 
