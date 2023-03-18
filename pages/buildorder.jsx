@@ -38,9 +38,65 @@ export default function buildOrder() {
     const [visible, setVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState(false);
     const [assets, setAssets] = useState([]);
+    const [mongoData, setMongoData] = useState()
 
     const handlerVisible = () => setVisible(true);
     const handler = () => setLoading(true);
+
+//Adding Private Orderbook- start
+    async function postMongo(data) {
+        console.log("clicked postMongo", data)
+        return axios.post("http://localhost:3000/api/route", 
+            {
+                erc20Token: data.erc20Token,
+                erc20TokenAmount: data.erc20TokenAmount,
+                nftToken: data.nftToken,
+                nftTokenId: data.nftTokenId,
+                nftTokenAmount: data.nftTokenAmount,
+                nftType: "ERC721",
+                sellOrBuyNft: "sell",
+                chainId: "5",
+                order: {
+                    direction: data.direction,
+                    erc20Token: data.erc20Token,
+                    erc20TokenAmount: data.erc20TokenAmount,
+                    erc721Token: data.erc721Token,
+                    erc721TokenId: data.erc721TokenId,
+                    erc721TokenProperties: data.erc721TokenProperties,
+                    expiry: data.expiry,
+                    fees: data.fees,
+                    maker: data.maker,
+                    nonce: data.nonce,
+                    signature: {
+                        r: data.signature.r,
+                        s: data.signature.s,
+                        v: data.signature.v,
+                        signatureType: data.signature.signatureType,
+        
+                    },
+                    taker: data.taker
+                },
+                orderStatus: {
+                    status: null,
+                    transactionHash: null,
+                    blockNumber: null
+                },
+                metadata: {}
+            }
+        )
+          .then(response => {
+            console.log(response.data);
+            return response.data;
+          })
+          .catch(error => {
+            console.error(error);
+            // throw error;
+          });
+      }
+//Adding Private Orderbook- end
+
+
+
     const getMetaData = async () => {
 
         const options = { method: 'GET', headers: { accept: 'application/json', 'X-API-Key': 'test' } };
@@ -63,7 +119,7 @@ export default function buildOrder() {
         initialValues: {
             price: "1",
             nftContract: "",
-            myNFT: "0xC2d8a39743A76EFF9e945974CF1DC0b2FEeF5c5F",
+            myNFT: "0xcDc8e8040C998306CfbA9af8BAe3E1A05D4C23cF",
         },
 
         onSubmit: async (values) => {
@@ -131,8 +187,13 @@ export default function buildOrder() {
                 console.log("Debug: 4")
                 console.log("signed order: ", signedOrder)
 
-                const postedOrder = await nftSwapSdk.postOrder(signedOrder, 5);
-                router.push("/buyorder");
+                const postedPrivateOrder= await postMongo(signedOrder)
+                console.log(postedPrivateOrder)
+
+                // const postedOrder = await nftSwapSdk.postOrder(signedOrder, 5);
+                console.log("Debug: 5")
+                // console.log("postedOrder",postedOrder)
+            
                
             } catch (error) {
                 console.log(error.message);

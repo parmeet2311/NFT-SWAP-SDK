@@ -88,8 +88,8 @@ export default function Orderbook() {
             // }
 
             console.log("Order", selectedNft.or);
-            const tx = await swapSdk.fillSignedOrder(selectedNft.or, undefined, {
-                gasLimit: "500000"
+            const tx = await swapSdk.fillSignedOrder(selectedNft.or,undefined,{
+                gasLimit: "500000",
                 // HACK(johnnrjj) - Rinkeby still has protocol fees, so we give it a little bit of ETH so its happy.
                 value: ethers.utils.parseEther("0.01"),
             });
@@ -101,7 +101,7 @@ export default function Orderbook() {
         catch (err) {
             console.log(err);
 
-            console.log("order: ", selectedNft.or);
+            console.log("order: ", selectedNft);
             setErrorMessage(true);
         }
     }
@@ -110,12 +110,12 @@ export default function Orderbook() {
 
         const options = { method: 'GET', headers: { accept: 'application/json', 'X-API-Key': 'test' } };
 
-        fetch('https://api.trader.xyz/orderbook/orders', options)
+        fetch('http://localhost:3000/api/route', options)
             .then(response => response.json())
             .then(response => {
 
-                console.log(response.orders)
-                setOrders(response.orders)
+                // console.log(response.data)
+                setOrders(response.data)
 
             })
             .catch(err => console.error(err));
@@ -128,9 +128,9 @@ export default function Orderbook() {
         const filterByNftType = orders.filter(index =>
             index.nftType === `${nftType}` && index.chainId === "5"
         )
-        // console.log(filterByNftType);
+        console.log("filterByNftType",filterByNftType);
         setFilterOrder(filterByNftType)
-        // console.log(filterOrder)
+        console.log("filterOrder",filterOrder)
     }
     const handleShow = (id, ad, order) => {
         setShow(true)
@@ -139,17 +139,19 @@ export default function Orderbook() {
             addr: ad,
             or: order
         })
-        // console.log(address, selectedNft)
+        console.log("selectedNft", selectedNft)
 
     };
 
     useEffect(() => {
         getOrderData();
+        console.log("selectedNft: ", selectedNft);
+        console.log("filterOrder", filterOrder)
     }, [])
 
     return (
         <div class="text-center m-8">
-            <h1>Orderbook</h1>
+            <h1>Private Orderbook</h1>
             <div>
                 <DropdownButton
                     id="dropdown-button-dark-example2"
@@ -177,7 +179,7 @@ export default function Orderbook() {
                     {filterOrder.filter(index => index.sellOrBuyNft === "sell").map(nft => (
                         <Card
                             style={{ width: '20rem', margin: '10px' }}
-                            onClick={() => handleShow(nft.nftTokenId, nft.nftToken, nft.order)}
+                            onClick={() => handleShow(nft.order.erc721TokenId, nft.order.erc721Token, nft.order)}
 
                         >
                             <Card.Body>
@@ -187,8 +189,8 @@ export default function Orderbook() {
 
                                     <li>erc20Token: {nft.erc20Token}</li>
                                     <li>erc20TokenAmount: {nft.erc20TokenAmount}</li>
-                                    <li>nftToken: {nft.nftToken}</li>
-                                    <li>nftTokenId: {nft.nftTokenId}</li>
+                                    <li>nftToken: {nft.order.erc721Token}</li>
+                                    <li>nftTokenId: {nft.order.erc721TokenId}</li>
                                     <li>chainId: {nft.chainId}</li>
 
                                 </Card.Text>
